@@ -31,6 +31,30 @@ async function getBooks(c: Context<Variables>) {
     };
 };
 
+async function getBookById(c: Context<Variables>) {
+    try {
+        const token = c.req.header('Authorization')!.replace("Bearer ", "");
+        const  { id }  = decode(token).payload;
+
+        const userId = Number(id);
+
+        const bookId = Number(c.req.param("bookId"));
+
+        const book  = await booksModels.getBookById(bookId, userId);
+
+        if(!book) throw new HTTPException(404, { message: "Book not found" });
+
+        return c.json({ book });
+
+    } catch (error: any) {
+        console.log(error);
+        
+        if(error instanceof HTTPException) throw error;
+
+        throw new HTTPException(500, { message: "Internal server error" });
+    };
+};
+
 async function creteBook(c: Context<Variables>) {
     try {
         const token = c.req.header('Authorization')!.replace("Bearer ", "");
@@ -56,6 +80,7 @@ async function creteBook(c: Context<Variables>) {
 const booksController = {
     getBooks,
     creteBook,
+    getBookById,
 };
 
 export default booksController;

@@ -22,10 +22,17 @@ async function createBook(newBook: NewBook, userId: number): Promise<QueryResult
     [name, synopsis, gender, author, serie_name, rating, is_read, img_url, userId]);
 };
 
+
+async function getBookById(bookId: number, userId: number) {
+    const { rows } = await db.query("SELECT * FROM books WHERE id = $1 AND user_id = $2", [bookId, userId]);
+    return rows[0];
+};
+
 const booksModels = {
     getBooks,
     getBooksCount,
     createBook,
+    getBookById,
 };
 
 export default booksModels;

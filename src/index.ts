@@ -17,7 +17,8 @@ const { PORT } = process.env;
 const app = new Hono<{ Variables: Variables }>()
 
 app
-.post('/auth', zValidator("json", userCredentialsSchema), authController.signIn);
+  .post('/auth', zValidator("json", userCredentialsSchema), authController.signIn)
+  .get('/books', authController.signIn)
 
 console.log(`Server is running on port ${PORT}`);
 

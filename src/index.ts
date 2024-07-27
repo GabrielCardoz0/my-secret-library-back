@@ -23,6 +23,7 @@ app
   .get('/books', booksController.getBooks)
   .post('/books', zValidator("json", newBookSchema), booksController.creteBook)
   .get('/books/:bookId', booksController.getBookById)
+  .put('/books/:bookId', zValidator("json", newBookSchema), booksController.updateBook)
 
 console.log(`Server is running on port ${PORT}`);
 

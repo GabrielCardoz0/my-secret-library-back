@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { Variables } from "hono/types";
 import booksModels from "../models/books";
 import { decode } from 'hono/jwt'
-import { NewBook } from "../schemas/books";
+import { Book, NewBook } from "../schemas/books";
 
 
 async function getBooks(c: Context<Variables>) {
@@ -77,10 +77,39 @@ async function creteBook(c: Context<Variables>) {
     };
 };
 
+async function updateBook(c: Context<Variables>) {
+    try {
+        const token = c.req.header('Authorization')!.replace("Bearer ", "");
+        const  { id }  = decode(token).payload;
+
+        const userId = Number(id);
+
+        const bookId = Number(c.req.param("bookId"));
+
+        const updatedBook: NewBook = await c.req.json();
+
+        const book: Book = await booksModels.getBookById(bookId, userId);
+
+        if(!book) throw new HTTPException(404, { message: "Book not found" });
+
+        await booksModels.updateBookById(updatedBook, bookId);
+
+        return c.json({ message: "Book updated!" });
+
+    } catch (error: any) {
+        console.log(error);
+        
+        if(error instanceof HTTPException) throw error;
+
+        throw new HTTPException(500, { message: "Internal server error" });
+    };
+};
+
 const booksController = {
     getBooks,
     creteBook,
     getBookById,
+    updateBook,
 };
 
 export default booksController;

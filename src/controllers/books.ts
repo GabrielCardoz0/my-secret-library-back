@@ -105,11 +105,38 @@ async function updateBook(c: Context<Variables>) {
     };
 };
 
+async function deleteBook(c: Context<Variables>) {
+    try {
+        const token = c.req.header('Authorization')!.replace("Bearer ", "");
+        const  { id }  = decode(token).payload;
+
+        const userId = Number(id);
+
+        const bookId = Number(c.req.param("bookId"));
+
+        const book: Book = await booksModels.getBookById(bookId, userId);
+
+        if(!book) throw new HTTPException(404, { message: "Book not found" });
+
+        await booksModels.deleteBookById(bookId);
+
+        return c.json({ message: "Book deleted!" }, 204);
+
+    } catch (error: any) {
+        console.log(error);
+        
+        if(error instanceof HTTPException) throw error;
+
+        throw new HTTPException(500, { message: "Internal server error" });
+    };
+};
+
 const booksController = {
     getBooks,
     creteBook,
     getBookById,
     updateBook,
+    deleteBook,
 };
 
 export default booksController;

@@ -24,6 +24,7 @@ app
   .post('/books', zValidator("json", newBookSchema), booksController.creteBook)
   .get('/books/:bookId', booksController.getBookById)
   .put('/books/:bookId', zValidator("json", newBookSchema), booksController.updateBook)
+  .delete('/books/:bookId', booksController.deleteBook)
 
 console.log(`Server is running on port ${PORT}`);
 

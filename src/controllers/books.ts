@@ -3,6 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { Variables } from "hono/types";
 import booksModels from "../models/books";
 import { decode } from 'hono/jwt'
+import { NewBook } from "../schemas/books";
 
 
 async function getBooks(c: Context<Variables>) {
@@ -28,8 +29,23 @@ async function getBooks(c: Context<Variables>) {
     };
 };
 
+async function creteBook(c: Context<Variables>) {
+    try {
+        
+        return c.json({ message: "Create book" });
+
+    } catch (error: any) {
+        console.log(error);
+        
+        if(error instanceof HTTPException) throw error;
+
+        throw new HTTPException(500, { message: "Internal server error" });
+    };
+};
+
 const booksController = {
     getBooks,
+    creteBook,
 };
 
 export default booksController;

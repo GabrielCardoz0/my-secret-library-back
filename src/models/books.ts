@@ -26,12 +26,13 @@ async function getBookById(bookId: number, userId: number) {
     return rows[0];
 };
 
-async function updateBookById(bookId: number, newBook: NewBook) {
+async function updateBookById(updatedBook: NewBook, bookId: number ) {
+    const { name, synopsis, gender, author, serie_name, rating, is_read, img_url } = updatedBook;
     return db.query(`
         UPDATE books
         SET name = $1, synopsis = $2, gender = $3, author = $4, serie_name = $5, rating = $6, is_read = $7, img_url = $8
         WHERE id = $9
-    ;`, []);
+    ;`, [name, synopsis, gender, author, serie_name, rating, is_read, img_url, bookId]);
 };
 
 async function deleteBookById(bookId: number) {

@@ -23,6 +23,8 @@ async function getBooks(c: Context<Variables>) {
         return c.json({ books, count: Number(booksCount) });
 
     } catch (error: any) {
+        console.log(error);
+        
         if(error instanceof HTTPException) throw error;
 
         throw new HTTPException(500, { message: "Internal server error" });
@@ -31,8 +33,16 @@ async function getBooks(c: Context<Variables>) {
 
 async function creteBook(c: Context<Variables>) {
     try {
+        const token = c.req.header('Authorization')!.replace("Bearer ", "");
+        const  { id }  = decode(token).payload;
         
-        return c.json({ message: "Create book" });
+        const userId = Number(id);
+        
+        const newBook: NewBook = await c.req.json();
+        
+        await booksModels.createBook(newBook, userId);
+        
+        return c.json({ message: "Book created!" }, 201);
 
     } catch (error: any) {
         console.log(error);

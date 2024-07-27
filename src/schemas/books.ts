@@ -23,8 +23,7 @@ export interface Book {
     img_url: string;
     user_id: number;
     created_at: Date;
-    updated_at: Date;
 };
 
-export interface NewBook extends Omit<Book, 'id' | 'created_at' | 'updated_at' | "user_id"> {
+export interface NewBook extends Omit<Book, 'id' | 'created_at' | "user_id"> {
 };

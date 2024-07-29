@@ -13,11 +13,11 @@ async function getBooks(c: Context<Variables>) {
 
         const userId = Number(id);
 
-        const [page, limit] = [c.req.query("page"), c.req.query("limit")];
+        const [page, limit, search] = [c.req.query("page"), c.req.query("limit"), c.req.query("search")];
 
         const offset = (Number(page ?? 1) - 1) * Number(limit ?? 0);
 
-        const books = await booksModels.getBooks(userId, Number(limit), offset);
+        const books = await booksModels.getBooks(userId, Number(limit), offset, search);
         const booksCount = await booksModels.getBooksCount(userId);
 
         return c.json({ books, count: Number(booksCount) });
@@ -115,15 +115,15 @@ async function deleteBook(c: Context<Variables>) {
         const bookId = Number(c.req.param("bookId"));
 
         const book: Book = await booksModels.getBookById(bookId, userId);
-
+        
         if(!book) throw new HTTPException(404, { message: "Book not found" });
-
+        
         await booksModels.deleteBookById(bookId);
-
-        return c.json({ message: "Book deleted!" }, 204);
+        
+        return c.json({ message: "Book deleted!" }, 200);
 
     } catch (error: any) {
-        console.log(error);
+        console.log(JSON.stringify(error, null, 2));
         
         if(error instanceof HTTPException) throw error;
 
